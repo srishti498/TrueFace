@@ -1,0 +1,39 @@
+# Core Requirements
+flask==2.0.3
+flask-login==0.5.0
+flask-cors==3.0.10
+flask-sqlalchemy==2.5.1
+flask-migrate==3.1.0
+
+# Database
+sqlalchemy==1.4.35
+psycopg2-binary==2.9.3  # For PostgreSQL (optional)
+
+# Image Processing
+opencv-python==4.5.5.64
+pillow==9.0.1
+numpy==1.22.3
+
+# Face Recognition (Choose one)
+# deepface==0.0.75  # If using DeepFace
+trueface-sdk==1.2.0  # If using official Trueface SDK
+
+# Data Processing
+pandas==1.4.1
+scikit-learn==1.0.2
+numpy==1.22.3
+
+# Authentication
+werkzeug==2.0.3
+pyjwt==2.3.0
+bcrypt==3.2.0
+
+# Utilities
+python-dotenv==0.19.2
+requests==2.27.1
+python-dateutil==2.8.2
+
+# Development
+gunicorn==20.1.0  # For production deployment
+pytest==7.1.2
+pytest-cov==3.0.0

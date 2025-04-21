@@ -1,0 +1,163 @@
+# models/db.py
+import sqlite3
+from flask import g
+import datetime
+
+DATABASE = 'trueface.db'
+
+def get_db():
+    """Get database connection"""
+    if 'db' not in g:
+        g.db = sqlite3.connect(DATABASE)
+        g.db.row_factory = sqlite3.Row
+        # Enable foreign key constraints
+        g.db.execute("PRAGMA foreign_keys = ON")
+    return g.db
+
+def init_db():
+    """Initialize database with schema"""
+    db = get_db()
+    cursor = db.cursor()
+
+    # Users Table (for admin panel)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        is_admin BOOLEAN DEFAULT 0,
+        is_active BOOLEAN DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMP
+    )''')
+
+    # Known Faces Database
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS known_faces (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        name TEXT NOT NULL,
+        face_encoding BLOB NOT NULL,
+        image_path TEXT NOT NULL,
+        metadata TEXT,
+        is_verified BOOLEAN DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )''')
+
+    # Analysis Results
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS analysis_results (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        profile_url TEXT NOT NULL,
+        image_path TEXT,
+        risk_score REAL NOT NULL,
+        is_fake BOOLEAN DEFAULT 0,
+        metadata TEXT,
+        face_analysis TEXT,
+        user_id INTEGER,
+        reviewed_by INTEGER,
+        reviewed_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+        FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
+    )''')
+
+    # Face Verification Logs
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS verification_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        known_face_id INTEGER,
+        input_face_id INTEGER,
+        similarity_score REAL NOT NULL,
+        is_match BOOLEAN DEFAULT 0,
+        verification_time REAL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (known_face_id) REFERENCES known_faces(id) ON DELETE CASCADE
+    )''')
+
+    # System Settings
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS system_settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        setting_key TEXT UNIQUE NOT NULL,
+        setting_value TEXT NOT NULL,
+        description TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    # Login Attempts
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS login_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        ip_address TEXT NOT NULL,
+        user_agent TEXT,
+        success BOOLEAN DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    # Audit Log
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS audit_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        action TEXT NOT NULL,
+        entity_type TEXT,
+        entity_id INTEGER,
+        details TEXT,
+        ip_address TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    )''')
+
+    # Create default admin user if not exists
+    cursor.execute("SELECT id FROM users WHERE is_admin = 1 LIMIT 1")
+    if not cursor.fetchone():
+        from werkzeug.security import generate_password_hash
+        cursor.execute('''
+        INSERT INTO users (username, email, password_hash, is_admin)
+        VALUES (?, ?, ?, ?)
+        ''', (
+            'admin',
+            'admin@trueface.local',
+            generate_password_hash('admin123'),
+            1
+        ))
+
+    # Create default settings if not exists
+    default_settings = [
+        ('risk_threshold', '0.75', 'Minimum risk score to flag as fake'),
+        ('max_login_attempts', '5', 'Maximum allowed failed login attempts'),
+        ('lockout_time', '15', 'Lockout time in minutes after max attempts'),
+        ('face_match_threshold', '0.6', 'Minimum similarity score for face match')
+    ]
+
+    for key, value, desc in default_settings:
+        cursor.execute('''
+        INSERT OR IGNORE INTO system_settings (setting_key, setting_value, description)
+        VALUES (?, ?, ?)
+        ''', (key, value, desc))
+
+    db.commit()
+
+def close_db(e=None):
+    """Close database connection"""
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+def query_db(query, args=(), one=False):
+    """Execute a query and return results"""
+    db = get_db()
+    cur = db.execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
+def get_setting(key, default=None):
+    """Get system setting value"""
+    row = query_db('SELECT setting_value FROM system_settings WHERE setting_key = ?', 
+                  [key], one=True)
+    return row[0] if row else default

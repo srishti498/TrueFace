@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrueFace | Profile Authenticity Scanner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --danger: #ef233c;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .logo-container {
+      margin-bottom: 30px;
+      display: inline-block;
+      padding: 12px 15px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+    
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .eye {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary);
+      border-radius: 50%;
+    }
+    
+    .eye-left { top: 12px; left: 8px; }
+    .eye-right { top: 12px; right: 8px; }
+    
+    .mouth {
+      position: absolute;
+      width: 14px;
+      height: 6px;
+      border-bottom: 2px solid var(--primary);
+      border-radius: 0 0 50% 50%;
+      bottom: 10px;
+      left: 11px;
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+    }
+    
+    .logo-text span {
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    .tagline {
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      transition: all 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="url"]:focus,
+    select:focus {
+      border-color: var(--primary);
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background-color: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .platform-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .platform-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .platform-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .results-container {
+      display: none;
+      margin-top: 30px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .risk-meter {
+      height: 10px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .risk-level {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 1s ease-out;
+    }
+
+    .risk-label {
+      font-weight: 600;
+      margin-top: 5px;
+      text-align: right;
+    }
+
+    .risk-details {
+      margin-top: 25px;
+    }
+
+    .risk-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .risk-item:last-child {
+      border-bottom: none;
+    }
+
+    .risk-category {
+      font-weight: 500;
+    }
+
+    .risk-value {
+      font-weight: 600;
+    }
+
+    .safe { color: #00b894; }
+    .suspicious { color: #f39c12; }
+    .danger { color: #e74c3c; }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px 20px;
+      }
+      
+      input, button {
+        padding: 12px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <div class="logo">
+      <div class="logo-icon">
+        <div class="eye eye-left"></div>
+        <div class="eye eye-right"></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="logo-text">True<span>Face</span></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Profile Authenticity Scanner</h2>
+    <p class="subtitle">Enter profile details to check for authenticity markers</p>
+
+    <div class="platform-selector">
+      <button class="platform-btn active">Instagram</button>
+      <button class="platform-btn">Facebook</button>
+      <button class="platform-btn">Twitter</button>
+      <button class="platform-btn">LinkedIn</button>
+    </div>
+
+    <div class="input-group">
+      <label for="profile-url">Profile URL</label>
+      <input type="url" id="profile-url" placeholder="https://instagram.com/username">
+    </div>
+
+    <div class="input-group">
+      <label for="profile-photo">Profile Photo Exists?</label>
+      <select id="profile-photo">
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="private-account">Private Account?</label>
+      <select id="private-account">
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="username-length">Username Length</label>
+      <input type="number" id="username-length" placeholder="Number of characters">
+    </div>
+
+    <div class="input-group">
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" placeholder="Profile display name">
+    </div>
+
+    <div class="input-group">
+      <label for="fullname-length">Full Name Length</label>
+      <input type="number" id="fullname-length" placeholder="Number of characters">
+    </div>
+
+    <div class="input-group">
+      <label for="bio-length">Bio Length</label>
+      <input type="number" id="bio-length" placeholder="Number of characters in bio">
+    </div>
+
+    <div class="input-group">
+      <label for="external-url">External URL</label>
+      <input type="text" id="external-url" placeholder="Website link in bio">
+    </div>
+
+    <div class="input-group">
+      <label for="post-count">Total Posts</label>
+      <input type="number" id="post-count" placeholder="Number of posts">
+    </div>
+
+    <div class="input-group">
+      <label for="followers">Followers Count</label>
+      <input type="number" id="followers" placeholder="Number of followers">
+    </div>
+
+    <div class="input-group">
+      <label for="following">Following Count</label>
+      <input type="number" id="following" placeholder="Number of accounts followed">
+    </div>
+
+    <button id="analyze-btn">Analyze Profile</button>
+
+    <div class="results-container" id="results-container">
+      <h3 style="text-align: center; margin-bottom: 15px;">Analysis Results</h3>
+      
+      <div class="risk-meter">
+        <div class="risk-level" id="risk-level"></div>
+      </div>
+      <div class="risk-label" id="risk-label"></div>
+      
+      <div class="risk-details">
+        <div class="risk-item">
+          <span class="risk-category">Profile Photo</span>
+          <span class="risk-value safe" id="photo-result">Genuine</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-category">Username Pattern</span>
+          <span class="risk-value suspicious" id="username-result">Suspicious</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-category">Activity Level</span>
+          <span class="risk-value danger" id="activity-result">Fake</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-category">Follower Ratio</span>
+          <span class="risk-value safe" id="follower-result">Normal</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-category">Bio Analysis</span>
+          <span class="risk-value suspicious" id="bio-result">Suspicious</span>
+        </div>
+      </div>
+      
+      <button style="margin-top: 25px; background: var(--danger);" id="report-btn">
+        <i class="fas fa-flag"></i> Report Fake Profile
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Platform selection
+    const platformBtns = document.querySelectorAll('.platform-btn');
+    platformBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        platformBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Analyze button functionality
+    document.getElementById('analyze-btn').addEventListener('click', function() {
+      // Show loading state
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+      this.disabled = true;
+      
+      // Simulate analysis delay
+      setTimeout(() => {
+        // Generate random risk score (0-100)
+        const riskScore = Math.floor(Math.random() * 100);
+        const resultsContainer = document.getElementById('results-container');
+        const riskLevel = document.getElementById('risk-level');
+        const riskLabel = document.getElementById('risk-label');
+        
+        // Update risk meter
+        riskLevel.style.width = `${riskScore}%`;
+        
+        // Set color based on risk level
+        if (riskScore < 30) {
+          riskLevel.style.background = '#00b894';
+          riskLabel.textContent = `Low Risk (${riskScore}%)`;
+          riskLabel.style.color = '#00b894';
+        } else if (riskScore < 70) {
+          riskLevel.style.background = '#f39c12';
+          riskLabel.textContent = `Medium Risk (${riskScore}%)`;
+          riskLabel.style.color = '#f39c12';
+        } else {
+          riskLevel.style.background = '#e74c3c';
+          riskLabel.textContent = `High Risk (${riskScore}%)`;
+          riskLabel.style.color = '#e74c3c';
+        }
+        
+        // Show results
+        resultsContainer.style.display = 'block';
+        
+        // Reset button
+        this.innerHTML = 'Analyze Profile';
+        this.disabled = false;
+        
+        // Scroll to results
+        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+      }, 1500);
+    });
+
+    // Report button functionality
+    document.getElementById('report-btn').addEventListener('click', function() {
+      alert('Thank you for reporting! Our team will review this profile within 24 hours.');
+    });
+  </script>
+  
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

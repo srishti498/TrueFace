@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin Dashboard</h2>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Analyses</h5>
+                    <p class="card-text display-4">{{ stats.total }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">High Risk</h5>
+                    <p class="card-text display-4">{{ stats.high_risk }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h4>Recent Analyses</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Profile</th>
+                    <th>Risk Score</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in recent %}
+                <tr>
+                    <td>{{ result.id }}</td>
+                    <td>{{ result.profile_url|truncate(25) }}</td>
+                    <td>{{ "%.2f"|format(result.risk_score) }}%</td>
+                    <td>{{ result.timestamp }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.view_result', id=result.id) }}" class="btn btn-sm btn-info">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

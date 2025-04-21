@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | TrueFace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --danger: #ef233c;
+      --success: #00b894;
+      --warning: #f39c12;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f5f7ff;
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 260px;
+      background: white;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+      padding: 20px 0;
+    }
+
+    .logo-container {
+      padding: 15px 25px;
+      margin-bottom: 30px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: var(--primary);
+    }
+    
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .eye {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: white;
+      border-radius: 50%;
+    }
+    
+    .eye-left { top: 12px; left: 8px; }
+    .eye-right { top: 12px; right: 8px; }
+    
+    .mouth {
+      position: absolute;
+      width: 14px;
+      height: 6px;
+      border-bottom: 2px solid white;
+      border-radius: 0 0 50% 50%;
+      bottom: 10px;
+      left: 11px;
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-item {
+      padding: 12px 25px;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(67, 97, 238, 0.1);
+      border-left: 3px solid var(--primary);
+    }
+
+    .nav-item i {
+      width: 24px;
+      margin-right: 12px;
+      color: var(--primary);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      margin-left: 260px;
+      padding: 30px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      width: 300px;
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      margin-left: 10px;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    /* Dashboard Cards */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--dark);
+    }
+
+    .stat-card .trend {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .trend.up {
+      color: var(--success);
+    }
+
+    .trend.down {
+      color: var(--danger);
+    }
+
+    /* Recent Activity */
+    .activity-container {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .see-all {
+      color: var(--primary);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .activity-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .activity-item {
+      display: flex;
+      padding: 15px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(67, 97, 238, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      color: var(--primary);
+    }
+
+    .activity-details {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 500;
+      margin: 0 0 5px 0;
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .activity-risk {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .risk-high {
+      color: var(--danger);
+    }
+
+    .risk-medium {
+      color: var(--warning);
+    }
+
+    .risk-low {
+      color: var(--success);
+    }
+
+    /* Recent Reports */
+    .reports-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .report-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .report-platform {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .platform-instagram {
+      background: #f3e6f7;
+      color: #c13584;
+    }
+
+    .platform-facebook {
+      background: #e7f0fd;
+      color: #1877f2;
+    }
+
+    .platform-twitter {
+      background: #e1f5fe;
+      color: #1da1f2;
+    }
+
+    .report-status {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .status-pending {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .status-investigating {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .status-resolved {
+      background: #e8f5e9;
+      color: #388e3c;
+    }
+
+    .report-profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .report-profile img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 15px;
+      object-fit: cover;
+    }
+
+    .report-profile-info h4 {
+      margin: 0 0 5px 0;
+    }
+
+    .report-profile-info p {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .report-details {
+      margin-bottom: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .report-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .report-date {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .btn {
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        overflow: hidden;
+      }
+      
+      .logo-text, .nav-item span {
+        display: none;
+      }
+      
+      .nav-item {
+        justify-content: center;
+        padding: 15px 0;
+      }
+      
+      .nav-item i {
+        margin-right: 0;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .search-bar {
+        width: 100%;
+        margin-bottom: 15px;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <div class="logo-container">
+      <div class="logo">
+        <div class="logo-icon">
+          <div class="eye eye-left"></div>
+          <div class="eye eye-right"></div>
+          <div class="mouth"></div>
+        </div>
+        <span class="logo-text">TrueFace</span>
+      </div>
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-item active">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </li>
+      <li class="nav-item">
+        <i class="fas fa-search"></i>
+        <span>Scan Profile</span>
+      </li>
+      <li class="nav-item">
+        <i class="fas fa-flag"></i>
+        <span>My Reports</span>
+      </li>
+      <li class="nav-item">
+        <i class="fas fa-bell"></i>
+        <span>Notifications</span>
+      </li>
+      <li class="nav-item">
+        <i class="fas fa-bookmark"></i>
+        <span>Saved Profiles</span>
+      </li>
+      <li class="nav-item">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </li>
+      <li class="nav-item">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header">
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search reports, profiles...">
+      </div>
+      <div class="user-profile">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
+        <span>Priya Sharma</span>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <h3>Profiles Scanned</h3>
+        <p class="value">142</p>
+        <div class="trend up">
+          <i class="fas fa-arrow-up"></i> 12% this month
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Fake Detected</h3>
+        <p class="value">37</p>
+        <div class="trend up">
+          <i class="fas fa-arrow-up"></i> 8% this month
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Reports Submitted</h3>
+        <p class="value">24</p>
+        <div class="trend down">
+          <i class="fas fa-arrow-down"></i> 3% this month
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Trust Score</h3>
+        <p class="value">89/100</p>
+        <div class="trend up">
+          <i class="fas fa-arrow-up"></i> 5% this month
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="activity-container">
+      <div class="section-title">
+        <h2>Recent Activity</h2>
+        <span class="see-all">See All</span>
+      </div>
+      <ul class="activity-list">
+        <li class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <div class="activity-details">
+            <h4 class="activity-title">Scanned profile @fakeuser123</h4>
+            <p class="activity-time">10 minutes ago</p>
+          </div>
+          <div class="activity-risk risk-high">High Risk</div>
+        </li>
+        <li class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-flag"></i>
+          </div>
+          <div class="activity-details">
+            <h4 class="activity-title">Reported profile @scammer2023</h4>
+            <p class="activity-time">2 hours ago</p>
+          </div>
+          <div class="activity-risk risk-high">High Risk</div>
+        </li>
+        <li class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="activity-details">
+            <h4 class="activity-title">Report TF-48729 was resolved</h4>
+            <p class="activity-time">1 day ago</p>
+          </div>
+          <div class="activity-risk risk-low">Resolved</div>
+        </li>
+        <li class="activity-item">
+          <div class="activity-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <div class="activity-details">
+            <h4 class="activity-title">Scanned profile @realseller</h4>
+            <p class="activity-time">2 days ago</p>
+          </div>
+          <div class="activity-risk risk-low">Low Risk</div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Recent Reports -->
+    <div class="section-title">
+      <h2>Recent Reports</h2>
+      <span class="see-all">See All</span>
+    </div>
+    <div class="reports-container">
+      <div class="report-card">
+        <div class="report-header">
+          <span class="report-platform platform-instagram">
+            <i class="fab fa-instagram"></i> Instagram
+          </span>
+          <span class="report-status status-investigating">Investigating</span>
+        </div>
+        <div class="report-profile">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+          <div class="report-profile-info">
+            <h4>@fakecelebrity</h4>
+            <p>Impersonating public figure</p>
+          </div>
+        </div>
+        <div class="report-details">
+          This profile is pretending to be a famous actor, using stolen photos and asking fans for money.
+        </div>
+        <div class="report-actions">
+          <span class="report-date">Reported 2 days ago</span>
+          <button class="btn btn-primary">View Details</button>
+        </div>
+      </div>
+      <div class="report-card">
+        <div class="report-header">
+          <span class="report-platform platform-facebook">
+            <i class="fab fa-facebook"></i> Facebook
+          </span>
+          <span class="report-status status-pending">Pending</span>
+        </div>
+        <div class="report-profile">
+          <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Profile">
+          <div class="report-profile-info">
+            <h4>John Smith</h4>
+            <p>Fake dating profile</p>
+          </div>
+        </div>
+        <div class="report-details">
+          Profile using fake pictures and scamming people in dating conversations.
+        </div>
+        <div class="report-actions">
+          <span class="report-date">Reported 5 days ago</span>
+          <button class="btn btn-primary">View Details</button>
+        </div>
+      </div>
+      <div class="report-card">
+        <div class="report-header">
+          <span class="report-platform platform-twitter">
+            <i class="fab fa-twitter"></i> Twitter
+          </span>
+          <span class="report-status status-resolved">Resolved</span>
+        </div>
+        <div class="report-profile">
+          <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile">
+          <div class="report-profile-info">
+            <h4>@cryptoscam</h4>
+            <p>Cryptocurrency scam</p>
+          </div>
+        </div>
+        <div class="report-details">
+          Account was promoting fake cryptocurrency investment opportunities.
+        </div>
+        <div class="report-actions">
+          <span class="report-date">Reported 2 weeks ago</span>
+          <button class="btn btn-primary">View Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

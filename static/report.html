@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Fake Profile | TrueFace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --danger: #ef233c;
+      --success: #00b894;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .logo-container {
+      margin-bottom: 30px;
+      display: inline-block;
+      padding: 12px 15px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+    
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .eye {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary);
+      border-radius: 50%;
+    }
+    
+    .eye-left { top: 12px; left: 8px; }
+    .eye-right { top: 12px; right: 8px; }
+    
+    .mouth {
+      position: absolute;
+      width: 14px;
+      height: 6px;
+      border-bottom: 2px solid var(--primary);
+      border-radius: 0 0 50% 50%;
+      bottom: 10px;
+      left: 11px;
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+    }
+    
+    .logo-text span {
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    .tagline {
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    input[type="text"],
+    input[type="url"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      transition: all 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .platform-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .platform-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: #f0f0f0;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .platform-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .file-upload {
+      border: 2px dashed #e0e0e0;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-upload:hover {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.05);
+    }
+
+    .file-upload i {
+      font-size: 40px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .file-upload p {
+      margin: 0;
+      color: #666;
+    }
+
+    #file-name {
+      font-size: 14px;
+      color: var(--primary);
+      margin-top: 10px;
+      display: none;
+    }
+
+    .checkbox-group {
+      margin: 20px 0;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-item input {
+      margin-right: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background-color: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #d63031;
+    }
+
+    .confirmation {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .confirmation i {
+      font-size: 60px;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+
+    .confirmation h3 {
+      color: var(--success);
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px 20px;
+      }
+      
+      input, textarea, button {
+        padding: 12px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <div class="logo">
+      <div class="logo-icon">
+        <div class="eye eye-left"></div>
+        <div class="eye eye-right"></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="logo-text">True<span>Face</span></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="report-form">
+      <h2>Report Fake Profile</h2>
+      <p class="subtitle">Help us make social media safer by reporting suspicious accounts</p>
+
+      <div class="platform-selector">
+        <button class="platform-btn active">Instagram</button>
+        <button class="platform-btn">Facebook</button>
+        <button class="platform-btn">Twitter</button>
+        <button class="platform-btn">Other</button>
+      </div>
+
+      <div class="form-group">
+        <label for="profile-url">Profile URL</label>
+        <input type="url" id="profile-url" placeholder="https://instagram.com/suspicious_account" required>
+      </div>
+
+      <div class="form-group">
+        <label for="reason">Reason for Reporting</label>
+        <select id="reason" required>
+          <option value="">Select a reason</option>
+          <option value="impersonation">Impersonation</option>
+          <option value="fake">Fake Profile</option>
+          <option value="scam">Scam/Fraud</option>
+          <option value="bot">Bot Account</option>
+          <option value="harassment">Harassment</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Detailed Explanation</label>
+        <textarea id="description" placeholder="Please provide details about why you believe this profile is fake..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Evidence (Screenshots, etc.)</label>
+        <div class="file-upload" id="file-upload">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drag & drop files here or click to browse</p>
+          <div id="file-name"></div>
+        </div>
+        <input type="file" id="file-input" style="display: none;" multiple>
+      </div>
+
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="agree-terms" required>
+          <label for="agree-terms">I confirm this report is made in good faith</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="notify-me">
+          <label for="notify-me">Notify me when this report is resolved</label>
+        </div>
+      </div>
+
+      <button class="btn btn-danger" id="submit-btn">
+        <i class="fas fa-flag"></i> Submit Report
+      </button>
+    </div>
+
+    <div class="confirmation" id="confirmation">
+      <i class="fas fa-check-circle"></i>
+      <h3>Report Submitted Successfully!</h3>
+      <p>Thank you for helping make social media safer. Our team will review this report within 24 hours.</p>
+      <p>Case ID: <strong>TF-<span id="case-id">48729</span></strong></p>
+      <button class="btn" onclick="window.location.href='index.html'">
+        <i class="fas fa-home"></i> Return to Home
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Platform selection
+    const platformBtns = document.querySelectorAll('.platform-btn');
+    platformBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        platformBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // File upload functionality
+    const fileUpload = document.getElementById('file-upload');
+    const fileInput = document.getElementById('file-input');
+    const fileName = document.getElementById('file-name');
+
+    fileUpload.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        fileName.textContent = `${fileInput.files.length} file(s) selected`;
+        fileName.style.display = 'block';
+        fileUpload.style.borderColor = 'var(--primary)';
+        fileUpload.style.backgroundColor = 'rgba(67, 97, 238, 0.05)';
+      }
+    });
+
+    // Drag and drop functionality
+    fileUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUpload.style.borderColor = 'var(--primary)';
+      fileUpload.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
+    });
+
+    fileUpload.addEventListener('dragleave', () => {
+      fileUpload.style.borderColor = '#e0e0e0';
+      fileUpload.style.backgroundColor = 'transparent';
+    });
+
+    fileUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUpload.style.borderColor = '#e0e0e0';
+      fileUpload.style.backgroundColor = 'transparent';
+      
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        fileName.textContent = `${fileInput.files.length} file(s) selected`;
+        fileName.style.display = 'block';
+        fileUpload.style.borderColor = 'var(--primary)';
+        fileUpload.style.backgroundColor = 'rgba(67, 97, 238, 0.05)';
+      }
+    });
+
+    // Form submission
+    document.getElementById('submit-btn').addEventListener('click', function() {
+      // Simple form validation
+      const profileUrl = document.getElementById('profile-url').value;
+      const reason = document.getElementById('reason').value;
+      const description = document.getElementById('description').value;
+      const agreeTerms = document.getElementById('agree-terms').checked;
+
+      if (!profileUrl || !reason || !description || !agreeTerms) {
+        alert('Please fill all required fields');
+        return;
+      }
+
+      // Show loading state
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+      this.disabled = true;
+
+      // Simulate form submission
+      setTimeout(() => {
+        // Generate random case ID
+        document.getElementById('case-id').textContent = Math.floor(Math.random() * 90000) + 10000;
+        
+        // Hide form and show confirmation
+        document.getElementById('report-form').style.display = 'none';
+        document.getElementById('confirmation').style.display = 'block';
+      }, 1500);
+    });
+  </script>
+  
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
